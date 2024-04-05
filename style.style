@@ -1,0 +1,90 @@
+canvas {
+  width = 500
+  height = 500
+}
+
+forall _sig_this_SLASH_NonEmptyList nel {
+  nel.center = (?, ?)
+  nel.normsq = normsq(nel.center)
+
+  nel.icon = Rectangle {
+    center: nel.center
+    strokeWidth: 1
+    strokeColor: #000000ff
+    fillColor: #00000055
+    width: 100
+    height: 50
+  }
+
+  nel.split = Line {
+    start: nel.center + (0, 25)
+    end: nel.center - (0, 25)
+    strokeWidth: 1
+  }
+
+  nel.labelText = Text {
+    center: (?, ?)
+    string: nel.label
+  }
+
+  ensure nel.labelText.center[1] == nel.center[1] + 35
+  encourage vdistsq(nel.labelText.center, nel.center) == 0
+
+  nel.car_center = nel.center - (25, 0)
+  nel.cdr_center = nel.center + (25, 0)
+}
+
+forall _sig_this_SLASH_NonEmptyList nel; _sig_this_SLASH_Thing thing
+where r := _rel_this_SLASH_NonEmptyList_car(nel, thing)
+with Rel r {
+  Text {
+    string: thing.label
+    center: nel.car_center
+  }
+}
+
+forall _sig_this_SLASH_NonEmptyList nel; _sig_this_SLASH_EmptyList el
+where r := _rel_this_SLASH_NonEmptyList_cdr(nel, el)
+with Rel r {
+  Equation {
+    string: "\emptyset"
+    center: nel.cdr_center
+  }
+}
+
+forall _sig_this_SLASH_NonEmptyList nel0; _sig_this_SLASH_NonEmptyList nel1
+where r := _rel_this_SLASH_NonEmptyList_cdr(nel0, nel1)
+with Rel r {
+  r.end = (?, ?)
+  r.distsq = vdistsq(nel0.cdr_center, r.end)
+  Line {
+    start: nel0.cdr_center
+    end: r.end
+    endArrowhead: "straight"
+  }
+
+  ensure signedDistance(nel1.icon, r.end) == 5
+  --strength = 100
+  --encourage strength * norm(r.end - nel0.cdr_center) == 0
+}
+
+forall _sig_this_SLASH_NonEmptyList nel0; _sig_this_SLASH_NonEmptyList nel1 {
+  ensure disjoint(nel0.icon, nel1.icon, 70)
+}
+
+collect _sig_this_SLASH_NonEmptyList nel into nels {
+  normsqs = listof normsq from nels
+  centers = listof center from nels
+
+  scalar scale = (canvas.width / 5) * (canvas.height / 5)
+
+  ensure sum(normsqs) / count(normsqs) == scale
+  ensure norm(sumVectors(centers)) == 0
+}
+
+collect Rel r into rs
+where r := _rel_this_SLASH_NonEmptyList_cdr(nel0, nel1)
+foreach _sig_this_SLASH_NonEmptyList nel0; _sig_this_SLASH_NonEmptyList nel1 {
+  distsqs = listof distsq from rs
+  encourage sum(distsqs) == 0
+}

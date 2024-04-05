@@ -1,0 +1,33 @@
+{
+  "name": "penrosegenerator",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "main": "dist/index.js",
+  "dependencies": {
+    "chokidar": "^3.6.0",
+    "prettier": "3.0.0",
+    "ws": "^8.6.0",
+    "xml-js": "^1.6.11"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build-decls": ":",
+    "typecheck": ":",
+    "start": "node bin/run.js"
+  },
+  "bin": {
+    "roger": "./bin/run.js"
+  },
+  "files": [
+    "build/**/*.js",
+    "build/**/*.js.map",
+    "bin/run.js"
+  ],
+  "devDependencies": {
+    "@types/node": "^12.12.68",
+    "@types/ws": "^8.5.4",
+    "@types/yargs": "^17.0.24",
+    "typescript": "^5.1.6"
+  }
+}
