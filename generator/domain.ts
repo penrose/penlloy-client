@@ -17,6 +17,7 @@ import Graph from "../utils/Graph.js";
 import { safeArray } from "../utils/Utils.js";
 import {
   toPenroseRelationFunctionName,
+  toPenroseSetFunctionName,
   toPenroseTypeName,
 } from "../utils/names.js";
 
@@ -176,10 +177,13 @@ export const constructDomain = ({
 
   for (const s of sets) {
     const { name, type } = s;
-    const lineWithoutDescriptor = `function ${toPenroseRelationFunctionName(
+    const lineWithoutDescriptor = `function ${toPenroseSetFunctionName(
       name
     )} (${toDomainName(type)}) -> Set`;
     const line = writeDomainDescriptors(lineWithoutDescriptor, s);
+    if (!prog.includes(line)) {
+      prog.push(line);
+    }
   }
 
   for (const rel of rels) {

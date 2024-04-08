@@ -5,6 +5,7 @@ import {
   compileInstance,
   translateToSubstance,
 } from "../generator/substance.js";
+import * as fs from "fs";
 
 const ws: WebSocket = new WebSocket("ws://localhost:1549");
 ws.onopen = () => {
@@ -28,12 +29,12 @@ ws.onmessage = (event) => {
     const rawModel = msgJson.model;
     const compiledModel = compileModel(rawModel);
     const domain = translateToDomain(compiledModel);
-    console.log("Generated domain: \n" + domain);
-
+    fs.writeFileSync("domain.domain", domain);
     const rawInstance = msgJson.instance;
     const substance = translateToSubstance(
       compileInstance(rawInstance, compiledModel)
     );
+    fs.writeFileSync("substance.substance", substance);
     console.log("Generated substance: \n" + substance);
   }
 };

@@ -69,7 +69,7 @@ export const compileInstance = (
 
   const atomTypesMap: Map<AlloyInstanceAtom, string[]> = new Map();
 
-  for (const type of rawTypes) {
+  for (const type of types) {
     for (const atom of type.atoms) {
       const retrieved = atomTypesMap.get(atom);
       if (retrieved === undefined) {
