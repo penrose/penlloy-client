@@ -1,7 +1,7 @@
 import { RawInstance } from "../types/RawAlloyInstance.js";
 import { RawModel } from "../types/RawAlloyModel.js";
 
-export type ReceivedMessage = ConnectedMessage | ModelAndInstanceMessage;
+export type ReceivedAlloyMessage = ConnectedMessage | ModelAndInstanceMessage;
 
 export type ConnectedMessage = {
   kind: "connected";

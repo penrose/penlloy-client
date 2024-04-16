@@ -9,17 +9,10 @@ type _type_Null
 type _type_RingEvent
 type _type_Stabilize
 type _type_String
-type _type_Time
 type _type_univ
 type _type_ring_SLASH_Ord
 type _type_seq_SLASH_Int
 type _type_trace_SLASH_Ord
-type _conj_ring_SLASH_Ord_OR_trace_SLASH_Ord
-type _conj_Node_OR_Time
-_type_ring_SLASH_Ord <: _conj_ring_SLASH_Ord_OR_trace_SLASH_Ord
-_type_trace_SLASH_Ord <: _conj_ring_SLASH_Ord_OR_trace_SLASH_Ord
-_type_Node <: _conj_Node_OR_Time
-_type_Time <: _conj_Node_OR_Time
 _type_Event <: _type_univ
 _type_Int <: _type_univ
 _type_Join <: _type_RingEvent
@@ -28,7 +21,6 @@ _type_Null <: _type_Event
 _type_RingEvent <: _type_Event
 _type_Stabilize <: _type_RingEvent
 _type_String <: _type_univ
-_type_Time <: _type_univ
 _type_ring_SLASH_Ord <: _type_univ
 _type_seq_SLASH_Int <: _type_Int
 _type_trace_SLASH_Ord <: _type_univ
@@ -38,15 +30,14 @@ function _set__DOLLAR_ExampleJoinAndStabilize_n0 (_type_Node) -> Set
 function _set__DOLLAR_ExampleJoinAndStabilize_n1 (_type_Node) -> Set
 function _set__DOLLAR_ExampleJoinAndStabilize_n2 (_type_Node) -> Set
 function _set__DOLLAR_ExampleJoinAndStabilize_n3 (_type_Node) -> Set
-function _set__DOLLAR_ExampleJoinAndStabilize_t0 (_type_Time) -> Set
-function _set__DOLLAR_ExampleJoinAndStabilize_t1 (_type_Time) -> Set
-function _set__DOLLAR_ExampleJoinAndStabilize_t2 (_type_Time) -> Set
-function _rel_bestSucc (_type_Node, _type_Node, _type_Time) -> Rel
-function _rel_First (_conj_ring_SLASH_Ord_OR_trace_SLASH_Ord, _conj_Node_OR_Time) -> Rel -- private
-function _rel_Next (_conj_ring_SLASH_Ord_OR_trace_SLASH_Ord, _conj_Node_OR_Time, _conj_Node_OR_Time) -> Rel -- private
+function _set_First (_type_trace_SLASH_Ord) -> Set -- private
+function _set_Next (_type_trace_SLASH_Ord) -> Set -- private
+function _set_post (_type_Event) -> Set
+function _set_pre (_type_Event) -> Set
+function _rel_bestSucc (_type_Node, _type_Node) -> Rel
+function _rel_First (_type_ring_SLASH_Ord, _type_Node) -> Rel -- private
+function _rel_Next (_type_ring_SLASH_Ord, _type_Node, _type_Node) -> Rel -- private
 function _rel_node (_type_RingEvent, _type_Node) -> Rel
-function _rel_post (_type_Event, _type_Time) -> Rel
-function _rel_prdc (_type_Node, _type_Node, _type_Time) -> Rel
-function _rel_pre (_type_Event, _type_Time) -> Rel
-function _rel_succ (_type_Node, _type_Node, _type_Time) -> Rel
-function _rel_succ2 (_type_Node, _type_Node, _type_Time) -> Rel
+function _rel_prdc (_type_Node, _type_Node) -> Rel
+function _rel_succ (_type_Node, _type_Node) -> Rel
+function _rel_succ2 (_type_Node, _type_Node) -> Rel
