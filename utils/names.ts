@@ -5,11 +5,15 @@ export const toPenroseTypeName = (typeName: string) => {
 };
 
 export const toPenroseRelationFunctionName = (relName: string) => {
-  return `_rel_${relName.replaceAll("$", "_DOLLAR_")}`;
+  return `_rel_${relName
+    .replaceAll("$", "_DOLLAR_")
+    .replaceAll("/", "_SLASH_")}`;
 };
 
 export const toPenroseSetFunctionName = (setName: string) => {
-  return `_set_${setName.replaceAll("$", "_DOLLAR_")}`;
+  return `_set_${setName
+    .replaceAll("$", "_DOLLAR_")
+    .replaceAll("/", "_SLASH_")}`;
 };
 
 export const toPenroseAtomName = ({ type, index }: AlloyInstanceAtom) => {

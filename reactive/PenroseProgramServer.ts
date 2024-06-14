@@ -2,6 +2,9 @@ import { WebSocket, WebSocketServer } from "ws";
 
 let wss: WebSocketServer | null;
 
+let currentDomain: string = "";
+let currentSubstance: string = "";
+
 export const broadcast = ({
   domain,
   substance,
@@ -9,6 +12,8 @@ export const broadcast = ({
   domain: string;
   substance: string;
 }) => {
+  currentDomain = domain;
+  currentSubstance = substance;
   if (wss !== null) {
     console.log("server: broadcasting domain and substance to clients");
     wss.clients.forEach((ws) => {
@@ -16,8 +21,8 @@ export const broadcast = ({
         ws.send(
           JSON.stringify({
             kind: "DomainAndSubstance",
-            domain,
-            substance,
+            domain: currentDomain,
+            substance: currentSubstance,
           })
         );
       }
@@ -35,6 +40,14 @@ export const penroseProgramServer = (port: number = 1550) => {
   console.log("server: started penrose program server at port " + port);
   wss.on("connection", (ws) => {
     console.log("server: client connected at " + ws.url);
+    console.log("server: sending current domain and substance to new client");
+    ws.send(
+      JSON.stringify({
+        kind: "DomainAndSubstance",
+        domain: currentDomain,
+        substance: currentSubstance,
+      })
+    );
   });
   return wss;
 };

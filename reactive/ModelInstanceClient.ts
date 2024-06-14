@@ -11,14 +11,17 @@ import { broadcast } from "./PenroseProgramServer.js";
 export const modelInstanceClient = (port: number = 1549) => {
   const ws: WebSocket = new WebSocket("ws://localhost:" + port);
   ws.onopen = () => {
-    console.info("client: Penlloy connection started.");
+    console.info("client: Connection to Alloy has been established.");
   };
   ws.onerror = (error) => {
-    console.error("client: Encountered error with message " + error.message);
-    console.error("client: Exiting now.");
+    console.log("client: Encountered error with message " + error.message);
+    ws.close();
   };
   ws.onclose = () => {
-    console.info("client: Alloy disconnected");
+    console.log(
+      "client: Alloy disconnected. Attempting to re-connect in 1 second."
+    );
+    setTimeout(() => modelInstanceClient(port), 1000);
   };
 
   ws.onmessage = (event) => {
@@ -30,6 +33,7 @@ export const modelInstanceClient = (port: number = 1549) => {
     } else {
       console.info("client: received model and instance");
       const rawModel = msgJson.model;
+      console.log(msgStr);
       const compiledModel = compileModel(rawModel);
       const domain = translateToDomain(compiledModel);
       const rawInstance = msgJson.instance;
