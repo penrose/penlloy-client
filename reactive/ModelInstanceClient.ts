@@ -11,7 +11,7 @@ import { broadcast } from "./PenroseProgramServer.js";
 export const modelInstanceClient = (port: number = 1549) => {
   const ws: WebSocket = new WebSocket("ws://localhost:" + port);
   ws.onopen = () => {
-    console.info("client: Connection to Alloy has been established.");
+    console.log("client: Connection to Alloy has been established.");
   };
   ws.onerror = (error) => {
     console.log("client: Encountered error with message " + error.message);
@@ -29,17 +29,31 @@ export const modelInstanceClient = (port: number = 1549) => {
     const msgJson = JSON.parse(msgStr) as ReceivedAlloyMessage;
 
     if (msgJson.kind === "connected") {
-      console.info("client: connected to Alloy server");
+      console.log("client: connected to Alloy server");
     } else {
-      console.info("client: received model and instance");
+      console.log("client: received model and instance");
       const rawModel = msgJson.model;
-      console.log(msgStr);
+      fs.writeFileSync(
+        "./temp/rawmodel.json",
+        JSON.stringify(rawModel, undefined, 2)
+      );
+      console.log("client: wrote raw model into temp file");
+      const rawInstance = msgJson.instance;
+      fs.writeFileSync(
+        "./temp/rawinstance.json",
+        JSON.stringify(rawInstance, undefined, 2)
+      );
+      console.log("client: wrote raw instance into temp file");
+
       const compiledModel = compileModel(rawModel);
       const domain = translateToDomain(compiledModel);
-      const rawInstance = msgJson.instance;
       const substance = translateToSubstance(
         compileInstance(rawInstance, compiledModel)
       );
+
+      fs.writeFileSync("./temp/domain.txt", domain);
+      fs.writeFileSync("./temp/substance.txt", substance);
+      console.log("client: wrote domain and substance into temp file");
 
       console.log("client: generated domain and substance");
       broadcast({ domain, substance });

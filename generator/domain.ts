@@ -14,7 +14,6 @@ import {
 } from "../types/DomainElement.js";
 import { ModelElementDescriptor, RawModel } from "../types/RawAlloyModel.js";
 import Graph from "../utils/Graph.js";
-import { safeArray } from "../utils/Utils.js";
 import {
   toPenroseRelationFunctionName,
   toPenroseSetFunctionName,
