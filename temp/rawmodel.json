@@ -2,34 +2,7 @@
   "types": [
     {
       "isOne": false,
-      "name": "Cur",
-      "isEnum": false,
-      "isMeta": false,
-      "isPrivate": false,
-      "isBuiltin": false,
-      "isAbstract": false
-    },
-    {
-      "isOne": false,
-      "name": "Dir",
-      "isEnum": false,
-      "isMeta": false,
-      "isPrivate": false,
-      "isBuiltin": false,
-      "isAbstract": false
-    },
-    {
-      "isOne": false,
-      "name": "DirEntry",
-      "isEnum": false,
-      "isMeta": false,
-      "isPrivate": false,
-      "isBuiltin": false,
-      "isAbstract": false
-    },
-    {
-      "isOne": false,
-      "name": "File",
+      "name": "Array",
       "isEnum": false,
       "isMeta": false,
       "isPrivate": false,
@@ -47,25 +20,7 @@
     },
     {
       "isOne": false,
-      "name": "Name",
-      "isEnum": false,
-      "isMeta": false,
-      "isPrivate": false,
-      "isBuiltin": false,
-      "isAbstract": false
-    },
-    {
-      "isOne": false,
       "name": "Object",
-      "isEnum": false,
-      "isMeta": false,
-      "isPrivate": false,
-      "isBuiltin": false,
-      "isAbstract": true
-    },
-    {
-      "isOne": true,
-      "name": "Root",
       "isEnum": false,
       "isMeta": false,
       "isPrivate": false,
@@ -102,36 +57,16 @@
   ],
   "hierarchyMap": [
     [
-      "Cur",
-      "Dir"
-    ],
-    [
-      "Dir",
-      "Object"
-    ],
-    [
-      "DirEntry",
+      "Array",
       "univ"
-    ],
-    [
-      "File",
-      "Object"
     ],
     [
       "Int",
       "univ"
     ],
     [
-      "Name",
-      "univ"
-    ],
-    [
       "Object",
       "univ"
-    ],
-    [
-      "Root",
-      "Dir"
     ],
     [
       "String",
@@ -142,58 +77,16 @@
       "Int"
     ]
   ],
-  "sets": [
-    {
-      "name": "$NoDirAliases_o",
-      "isMeta": false,
-      "isPrivate": false,
-      "type": "Dir"
-    }
-  ],
+  "sets": [],
   "relations": [
-    {
-      "name": "$d",
-      "isMeta": false,
-      "isPrivate": false,
-      "type": [
-        "File",
-        "Dir"
-      ]
-    },
     {
       "name": "contents",
       "isMeta": false,
       "isPrivate": false,
       "type": [
-        "DirEntry",
+        "Array",
+        "seq/Int",
         "Object"
-      ]
-    },
-    {
-      "name": "entries",
-      "isMeta": false,
-      "isPrivate": false,
-      "type": [
-        "Dir",
-        "DirEntry"
-      ]
-    },
-    {
-      "name": "name",
-      "isMeta": false,
-      "isPrivate": false,
-      "type": [
-        "DirEntry",
-        "Name"
-      ]
-    },
-    {
-      "name": "parent",
-      "isMeta": false,
-      "isPrivate": false,
-      "type": [
-        "Dir",
-        "Dir"
       ]
     }
   ]

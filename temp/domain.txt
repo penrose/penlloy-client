@@ -1,30 +1,9 @@
 type Rel
 type Set
 Set <: Rel
-type _type_Cur
-type _type_Dir
-type _type_DirEntry
-type _type_File
-type _type_Int
-type _type_Name
+type _type_Array
 type _type_Object
-type _type_Root
-type _type_String
 type _type_univ
-type _type_seq_SLASH_Int
-_type_Cur <: _type_Dir
-_type_Dir <: _type_Object
-_type_DirEntry <: _type_univ
-_type_File <: _type_Object
-_type_Int <: _type_univ
-_type_Name <: _type_univ
+_type_Array <: _type_univ
 _type_Object <: _type_univ
-_type_Root <: _type_Dir
-_type_String <: _type_univ
-_type_seq_SLASH_Int <: _type_Int
-function _set__DOLLAR_NoDirAliases_o (_type_Dir) -> Set
-function _rel__DOLLAR_d (_type_File, _type_Dir) -> Rel
-function _rel_contents (_type_DirEntry, _type_Object) -> Rel
-function _rel_entries (_type_Dir, _type_DirEntry) -> Rel
-function _rel_name (_type_DirEntry, _type_Name) -> Rel
-function _rel_parent (_type_Dir, _type_Dir) -> Rel
+function _rel_contents (_type_Array, Number, _type_Object) -> Rel

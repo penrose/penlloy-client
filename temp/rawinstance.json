@@ -1,37 +1,11 @@
 {
   "types": [
     {
-      "name": "Cur",
+      "name": "Array",
       "atoms": [
         {
           "index": 0,
-          "type": "Cur"
-        }
-      ]
-    },
-    {
-      "name": "Dir",
-      "atoms": [
-        {
-          "index": 0,
-          "type": "Cur"
-        },
-        {
-          "index": 0,
-          "type": "Root"
-        }
-      ]
-    },
-    {
-      "name": "Object",
-      "atoms": [
-        {
-          "index": 0,
-          "type": "Cur"
-        },
-        {
-          "index": 0,
-          "type": "Root"
+          "type": "Array"
         }
       ]
     },
@@ -40,15 +14,7 @@
       "atoms": [
         {
           "index": 0,
-          "type": "Cur"
-        },
-        {
-          "index": 0,
-          "type": "DirEntry"
-        },
-        {
-          "index": 1,
-          "type": "DirEntry"
+          "type": "Array"
         },
         {
           "index": -8,
@@ -100,7 +66,7 @@
         },
         {
           "index": 4,
-          "type": "seq/Int"
+          "type": "Int"
         },
         {
           "index": 5,
@@ -116,28 +82,19 @@
         },
         {
           "index": 0,
-          "type": "Name"
+          "type": "Object"
         },
         {
           "index": 1,
-          "type": "Name"
+          "type": "Object"
         },
         {
-          "index": 0,
-          "type": "Root"
-        }
-      ]
-    },
-    {
-      "name": "DirEntry",
-      "atoms": [
-        {
-          "index": 0,
-          "type": "DirEntry"
+          "index": 2,
+          "type": "Object"
         },
         {
-          "index": 1,
-          "type": "DirEntry"
+          "index": 3,
+          "type": "Object"
         }
       ]
     },
@@ -194,7 +151,7 @@
         },
         {
           "index": 4,
-          "type": "seq/Int"
+          "type": "Int"
         },
         {
           "index": 5,
@@ -228,50 +185,34 @@
         {
           "index": 3,
           "type": "seq/Int"
-        },
-        {
-          "index": 4,
-          "type": "seq/Int"
         }
       ]
     },
     {
-      "name": "Name",
+      "name": "Object",
       "atoms": [
         {
           "index": 0,
-          "type": "Name"
+          "type": "Object"
         },
         {
           "index": 1,
-          "type": "Name"
-        }
-      ]
-    },
-    {
-      "name": "Root",
-      "atoms": [
+          "type": "Object"
+        },
         {
-          "index": 0,
-          "type": "Root"
+          "index": 2,
+          "type": "Object"
+        },
+        {
+          "index": 3,
+          "type": "Object"
         }
       ]
     }
   ],
-  "filename": "/tmp/alloy4tmp40-yiliangl/models/examples/systems/file_system.als",
-  "commandname": "Check check$1 for 5 expect 1",
-  "sets": [
-    {
-      "name": "$NoDirAliases_o",
-      "type": "Dir",
-      "atoms": [
-        {
-          "index": 0,
-          "type": "Cur"
-        }
-      ]
-    }
-  ],
+  "filename": "/home/yiliangl/penlloy/penlloy-alloy-6/org.alloytools.alloy.dist/target/Untitled 1.als",
+  "commandname": "Run run$1 for exactly 1 Array, exactly 4 Object",
+  "sets": [],
   "relations": [
     {
       "name": "contents",
@@ -279,86 +220,57 @@
         [
           {
             "index": 0,
-            "type": "DirEntry"
+            "type": "Array"
           },
           {
             "index": 0,
-            "type": "Cur"
-          }
-        ],
-        [
-          {
-            "index": 1,
-            "type": "DirEntry"
+            "type": "seq/Int"
           },
           {
-            "index": 0,
-            "type": "Cur"
-          }
-        ]
-      ]
-    },
-    {
-      "name": "entries",
-      "tuples": [
-        [
-          {
-            "index": 0,
-            "type": "Root"
-          },
-          {
-            "index": 0,
-            "type": "DirEntry"
+            "index": 3,
+            "type": "Object"
           }
         ],
         [
           {
             "index": 0,
-            "type": "Root"
+            "type": "Array"
           },
           {
             "index": 1,
-            "type": "DirEntry"
-          }
-        ]
-      ]
-    },
-    {
-      "name": "name",
-      "tuples": [
-        [
-          {
-            "index": 0,
-            "type": "DirEntry"
+            "type": "seq/Int"
           },
           {
-            "index": 0,
-            "type": "Name"
+            "index": 2,
+            "type": "Object"
           }
         ],
         [
           {
-            "index": 1,
-            "type": "DirEntry"
+            "index": 0,
+            "type": "Array"
+          },
+          {
+            "index": 2,
+            "type": "seq/Int"
           },
           {
             "index": 1,
-            "type": "Name"
+            "type": "Object"
           }
-        ]
-      ]
-    },
-    {
-      "name": "parent",
-      "tuples": [
+        ],
         [
           {
             "index": 0,
-            "type": "Cur"
+            "type": "Array"
+          },
+          {
+            "index": 3,
+            "type": "seq/Int"
           },
           {
             "index": 0,
-            "type": "Root"
+            "type": "Object"
           }
         ]
       ]

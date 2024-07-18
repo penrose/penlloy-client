@@ -6,7 +6,7 @@ import {
 } from "./RawAlloyModel.js";
 
 export interface AlloyModel {
-  types: Map<string, AlloyModelType>;
+  topLevelSigs: Map<string, AlloyModelType>;
   sets: Map<string, AlloyModelSet>;
   relations: Map<string, AlloyModelRelation>;
   hierarchyMap: [string, string][];

@@ -70,7 +70,7 @@ export const compileModel = (rawModel: RawModel): AlloyModel => {
   }
 
   return {
-    types: typeMap,
+    topLevelSigs: typeMap,
     sets: setMap,
     relations: relationMap,
     hierarchyMap: rawModel.hierarchyMap,
@@ -84,6 +84,10 @@ const emptyDomainStructure = (): TranslatedDomainStructure => ({
   sets: [],
   rels: [],
 });
+
+const isDomainLiteralType = (t: string) => {
+  return t === "PENROSENumber" || t === "PENROSEString";
+};
 
 export const translateToDomain = (model: AlloyModel) => {
   const initRes = emptyDomainStructure();
@@ -100,7 +104,7 @@ export const translateToDomain = (model: AlloyModel) => {
     };
   };
 
-  const afterTypes = [...model.types.values()].reduce(
+  const afterTypes = [...model.topLevelSigs.values()].reduce(
     (acc, type) => addResult(acc, processType(type)),
     initRes
   );
@@ -150,7 +154,7 @@ const writeDomainDescriptors = (
     : `${originalLine} -- ${words.join(" ")}`;
 };
 
-export const constructDomain = ({
+const constructDomain = ({
   types,
   subtypes,
   sets,
@@ -202,7 +206,7 @@ export const constructDomain = ({
 const processSingleName = (raw: string): DomainSingleType => {
   return {
     tag: "DomainSingleType",
-    contents: raw,
+    contents: alloyTypeDomainTypeMap(raw),
   };
 };
 
@@ -225,19 +229,31 @@ const processType = (type: AlloyModelType): TranslatedDomainStructure => {
   const result = emptyDomainStructure();
 
   const domainType = processSingleName(name);
-
-  addTypeAndNecessarySubtypes(result, domainType);
+  addSingleType(result, domainType);
 
   return result;
+};
+
+const addSingleType = (
+  result: TranslatedDomainStructure,
+  singleType: DomainSingleType
+) => {
+  const type = singleType.contents;
+  if (isDomainLiteralType(type)) {
+    // ignore, these types should never be declared in Domain
+  } else {
+    result.types.push(singleType);
+  }
 };
 
 const addTypeAndNecessarySubtypes = (
   result: TranslatedDomainStructure,
   domainType: DomainType
 ) => {
-  result.types.push(domainType);
-
-  if (domainType.tag === "DomainMultipleType") {
+  if (domainType.tag === "DomainSingleType") {
+    addSingleType(result, domainType);
+  } else {
+    result.types.push(domainType);
     for (const singleType of domainType.contents) {
       result.subtypes.push({
         tag: "DomainSubType",
@@ -256,7 +272,7 @@ const processSet = (set: AlloyModelSet): TranslatedDomainStructure => {
   // `sig X in Y + Z {}`
   // type is [Y, Z]
 
-  const domainType = makeSingleOrMultipleDomainType(types);
+  const domainType = alloyTypeToDomainType(types);
 
   addTypeAndNecessarySubtypes(result, domainType);
 
@@ -294,22 +310,42 @@ const processRel = (rel: AlloyModelRelation): TranslatedDomainStructure => {
 const processHierarchyMap = (hierarchyMap: [string, string][]) => {
   const result = emptyDomainStructure();
   for (const [sub, sup] of hierarchyMap) {
+    const domSub = processSingleName(sub);
+    const domSup = processSingleName(sup);
+
+    if (
+      isDomainLiteralType(domSub.contents) ||
+      isDomainLiteralType(domSup.contents)
+    ) {
+      continue;
+    }
+
     result.subtypes.push({
       tag: "DomainSubType",
-      sub: { tag: "DomainSingleType", contents: sub },
-      sup: { tag: "DomainSingleType", contents: sup },
+      sub: processSingleName(sub),
+      sup: processSingleName(sup),
     });
   }
   return result;
 };
 
+const alloyTypeDomainTypeMap = (t: string) => {
+  if (t === "Int" || t === "seq/Int") {
+    return "PENROSENumber";
+  } else if (t === "String") {
+    return "PENROSEString";
+  } else {
+    return t;
+  }
+};
 /**
- * Deduplicate and sort the provided type list, and return a single type if there is only one, or a multiple type if there are multiple.
- * @param names
+ * Convert a (list of) Alloy type into a Penrose Domain type.
+ * @param names a list of Alloy types. If there are more than one, this represents the union of multiple types.
  */
-const makeSingleOrMultipleDomainType = (names: string[]): DomainType => {
+const alloyTypeToDomainType = (names: string[]): DomainType => {
   const ns = new Set(names);
-  const sorted = Array.from(ns).sort();
+  const sorted = Array.from(ns).sort().map(alloyTypeDomainTypeMap);
+
   if (sorted.length === 1) {
     return {
       tag: "DomainSingleType",
@@ -327,5 +363,5 @@ const processRelType = (types: string[][]) => {
   const transposed = types[0].map((_, colIndex) =>
     types.map((row) => row[colIndex])
   );
-  return transposed.map(makeSingleOrMultipleDomainType);
+  return transposed.map(alloyTypeToDomainType);
 };
