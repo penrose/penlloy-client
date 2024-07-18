@@ -1,7 +1,0 @@
-_type_Array _atom_Array_0
-_type_Object _atom_Object_0, _atom_Object_1, _atom_Object_2, _atom_Object_3
-Label _atom_Array_0 "Array_0"
-Label _atom_Object_0 "Object_0"
-Label _atom_Object_1 "Object_1"
-Label _atom_Object_2 "Object_2"
-Label _atom_Object_3 "Object_3"

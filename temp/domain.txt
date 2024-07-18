@@ -1,9 +1,0 @@
-type Rel
-type Set
-Set <: Rel
-type _type_Array
-type _type_Object
-type _type_univ
-_type_Array <: _type_univ
-_type_Object <: _type_univ
-function _rel_contents (_type_Array, Number, _type_Object) -> Rel

@@ -34,13 +34,13 @@ export const modelInstanceClient = (port: number = 1549) => {
       console.log("client: received model and instance");
       const rawModel = msgJson.model;
       fs.writeFileSync(
-        "./temp/rawmodel.json",
+        "./temp_outputs/rawmodel.json",
         JSON.stringify(rawModel, undefined, 2)
       );
       console.log("client: wrote raw model into temp file");
       const rawInstance = msgJson.instance;
       fs.writeFileSync(
-        "./temp/rawinstance.json",
+        "./temp_outputs/rawinstance.json",
         JSON.stringify(rawInstance, undefined, 2)
       );
       console.log("client: wrote raw instance into temp file");
@@ -51,9 +51,11 @@ export const modelInstanceClient = (port: number = 1549) => {
         compileInstance(rawInstance, compiledModel)
       );
 
-      fs.writeFileSync("./temp/domain.txt", domain);
-      fs.writeFileSync("./temp/substance.txt", substance);
-      console.log("client: wrote domain and substance into temp file");
+      fs.writeFileSync("./temp_outputs/domain.txt", domain);
+      fs.writeFileSync("./temp_outputs/substance.txt", substance);
+      console.log(
+        "client: wrote generated domain and substance into temp file"
+      );
 
       console.log("client: generated domain and substance");
       broadcast({ domain, substance });
