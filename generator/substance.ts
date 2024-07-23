@@ -1,6 +1,9 @@
 import {
   AlloyInstance,
   AlloyInstanceAtom,
+  AlloyInstanceOtherAtom,
+  AlloyInstanceRelation,
+  AlloyInstanceSet,
   AlloyInstanceType,
 } from "../types/AlloyInstance.js";
 import { AlloyModel } from "../types/AlloyModel.js";
@@ -18,10 +21,24 @@ import {
   toPenroseTypeName,
 } from "../utils/names.js";
 
-const ignoredTypes = new Set(["Int", "seq/Int"]);
-
 const toAtomUniqueName = ({ type, index }: RawInstanceAtom): string => {
   return `${type}:${index}`;
+};
+
+const processAtom = (atom: RawInstanceAtom): AlloyInstanceAtom => {
+  const { type, index } = atom;
+  if (type === "Int" || type === "seq/Int") {
+    return {
+      tag: "Number",
+      contents: index,
+    };
+  } else {
+    return {
+      tag: "Atom",
+      type,
+      index,
+    };
+  }
 };
 
 export const compileInstance = (
@@ -30,36 +47,31 @@ export const compileInstance = (
 ): AlloyInstance => {
   const hierarchyOrder = model.hierarchyGraph.topsort();
 
-  const rawTypes: RawInstanceType[] = instance.types
-    .filter((t) => !ignoredTypes.has(t.name))
-    .map((t) => ({
-      name: t.name,
-      atoms: t.atoms.filter((a) => !ignoredTypes.has(a.type)),
-    }));
+  const rawTypes: RawInstanceType[] = instance.types;
 
   const nameAtomMap: Map<string, AlloyInstanceAtom> = new Map(
-    rawTypes.flatMap((t) => t.atoms).map((a) => [toAtomUniqueName(a), a])
+    rawTypes
+      .flatMap((t) => t.atoms)
+      .map((a) => [toAtomUniqueName(a), processAtom(a)])
   );
 
   // Make sure that all equivalent atoms in the types, sets, and relations
   // refer to the same Atom object.
-  const types: RawInstanceType[] = rawTypes.map((t) => ({
+  const types: AlloyInstanceType[] = rawTypes.map((t) => ({
     name: t.name,
     atoms: t.atoms.map((a) => nameAtomMap.get(toAtomUniqueName(a))!),
   }));
 
-  const sets: RawInstanceSet[] = instance.sets.map((s) => ({
+  const sets: AlloyInstanceSet[] = instance.sets.map((s) => ({
     name: s.name,
-    atoms: s.atoms
-      .filter((a) => !ignoredTypes.has(a.type))
-      .map((a) => nameAtomMap.get(toAtomUniqueName(a))!),
+    atoms: s.atoms.map((a) => nameAtomMap.get(toAtomUniqueName(a))!),
   }));
 
-  const relations: RawInstanceRelation[] = instance.relations.map((r) => ({
+  const relations: AlloyInstanceRelation[] = instance.relations.map((r) => ({
     name: r.name,
-    tuples: r.tuples
-      .filter((t) => t.every((a) => !ignoredTypes.has(a.type)))
-      .map((t) => t.map((a) => nameAtomMap.get(toAtomUniqueName(a))!)),
+    tuples: r.tuples.map((t) =>
+      t.map((a) => nameAtomMap.get(toAtomUniqueName(a))!)
+    ),
   }));
 
   // ===================================
@@ -112,18 +124,22 @@ export const compileInstance = (
   };
 };
 
-const toAtomDisplayName = (atom: AlloyInstanceAtom): string =>
+const toAtomDisplayName = (atom: AlloyInstanceOtherAtom): string =>
   `${atom.type}_${atom.index}`;
 
 export const translateToSubstance = (instance: AlloyInstance) => {
   const prog: string[] = [];
 
   for (const t of instance.types) {
-    const typeName = toPenroseTypeName(t.name);
-    const atomNames = t.atoms.map(toPenroseAtomName);
+    if (t.name === "Int" || t.name === "seq/Int" || t.name === "String") {
+      // these types should never appear in Substance
+    } else {
+      const typeName = toPenroseTypeName(t.name);
+      const atomNames = t.atoms.map(toPenroseAtomName);
 
-    const line = `${typeName} ${atomNames.join(", ")}`;
-    prog.push(line);
+      const line = `${typeName} ${atomNames.join(", ")}`;
+      prog.push(line);
+    }
   }
 
   let sIndex = 0;
@@ -152,8 +168,12 @@ export const translateToSubstance = (instance: AlloyInstance) => {
 
   for (const t of instance.types) {
     for (const a of t.atoms) {
-      const line = `Label ${toPenroseAtomName(a)} \"${toAtomDisplayName(a)}\"`;
-      prog.push(line);
+      if (a.tag === "Atom") {
+        const line = `Label ${toPenroseAtomName(a)} \"${toAtomDisplayName(
+          a
+        )}\"`;
+        prog.push(line);
+      }
     }
   }
 
