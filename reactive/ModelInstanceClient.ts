@@ -10,6 +10,9 @@ import { broadcast } from "./PenroseProgramServer.js";
 
 export const modelInstanceClient = (port: number = 1549) => {
   const ws: WebSocket = new WebSocket("ws://localhost:" + port);
+
+  fs.mkdirSync("./temp_outputs", { recursive: true });
+
   ws.onopen = () => {
     console.log("client: Connection to Alloy has been established.");
   };
