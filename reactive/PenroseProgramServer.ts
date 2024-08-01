@@ -6,14 +6,10 @@ let wss: WebSocketServer | null;
 let currentDomain: string = "";
 let currentSubstance: string = "";
 
-
-
 type ExploreModelMessage = {
-  kind: "ExploreModel"
-  operation:  "Newinit" | "NewTrace" | "NewFork" | "StepLeft" | "StepRight" 
-}
-
-
+  kind: "ExploreModel";
+  operation: "Newinit" | "NewTrace" | "NewFork" | "StepLeft" | "StepRight";
+};
 
 export const broadcast = ({
   domain,
@@ -45,7 +41,8 @@ export const broadcast = ({
   }
 };
 
-{/*
+{
+  /*
 
   wss.on('message', (message) => {
   try {
@@ -76,7 +73,8 @@ export const broadcast = ({
 
 
 
-  */}
+  */
+}
 
 export const penroseProgramServer = (port: number = 1550) => {
   wss = new WebSocketServer({ port });
@@ -91,54 +89,53 @@ export const penroseProgramServer = (port: number = 1550) => {
         substance: currentSubstance,
       })
     );
+    ws.on("message", (msg) => {
+      console.log("message received");
+    });
   });
 
   const client_ws: WebSocket = new WebSocket("ws://localhost:" + port);
 
-
-
-
-
-  for (const ws of wss.clients) {
-    ws.on("message", (msg) => {
-      console.log("message received");
-    })
-    // ws.onmessage = (msg) => {
-    //   console.log("message received")
-    //   try {
-    //     const parsedMessage = JSON.parse(msg.data as string);
-    //     console.log('Recieved message', parsedMessage);
-    //     if(parsedMessage.kind === 'ExploreModel') {
-    //       switch(parsedMessage.operation) {
-    //         case 'NewInit':
-    //           console.log('New Init operation');
-    //           client_ws.send(parsedMessage);
-    //           break;
-    //         case 'NewTrace':
-    //           console.log('New Trace operation');
-    //           client_ws.send(parsedMessage);
-    //           break;
-    //         case 'NewFork':
-    //           console.log('New Fork operation');
-    //           client_ws.send(parsedMessage);
-    //           break;
-    //         case 'StepLeft':
-    //           console.log('Step Left operation')
-    //           client_ws.send(parsedMessage);
-    //           break;
-    //         case 'Stepright':
-    //           console.log('Step right operation')
-    //           client_ws.send(parsedMessage);
-    //           break;  
-    //       } 
-    //     } else {
-    //       console.log('Non-ExploreModel operation');
-    //     }
-    //   } catch(error) {
-    //     console.log('Could not parse JSON', error);
-    //   }
-    // 
-    // }
-  }
+  // for (const ws of wss.clients) {
+  //   ws.on("message", (msg) => {
+  //     console.log("message received");
+  //   });
+  //   // ws.onmessage = (msg) => {
+  //   //   console.log("message received")
+  //   //   try {
+  //   //     const parsedMessage = JSON.parse(msg.data as string);
+  //   //     console.log('Recieved message', parsedMessage);
+  //   //     if(parsedMessage.kind === 'ExploreModel') {
+  //   //       switch(parsedMessage.operation) {
+  //   //         case 'NewInit':
+  //   //           console.log('New Init operation');
+  //   //           client_ws.send(parsedMessage);
+  //   //           break;
+  //   //         case 'NewTrace':
+  //   //           console.log('New Trace operation');
+  //   //           client_ws.send(parsedMessage);
+  //   //           break;
+  //   //         case 'NewFork':
+  //   //           console.log('New Fork operation');
+  //   //           client_ws.send(parsedMessage);
+  //   //           break;
+  //   //         case 'StepLeft':
+  //   //           console.log('Step Left operation')
+  //   //           client_ws.send(parsedMessage);
+  //   //           break;
+  //   //         case 'Stepright':
+  //   //           console.log('Step right operation')
+  //   //           client_ws.send(parsedMessage);
+  //   //           break;
+  //   //       }
+  //   //     } else {
+  //   //       console.log('Non-ExploreModel operation');
+  //   //     }
+  //   //   } catch(error) {
+  //   //     console.log('Could not parse JSON', error);
+  //   //   }
+  //   //
+  //   // }
+  // }
   return wss;
 };
