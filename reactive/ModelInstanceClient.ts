@@ -14,10 +14,6 @@ export const modelInstanceClient = (port: number = 1549) => {
   wsToAlloy = new WebSocket("ws://localhost:" + port);
   //move this outside, when called, assign the port
 
-  
-
-
-
   fs.mkdirSync("./temp_outputs", { recursive: true });
 
   wsToAlloy.onopen = () => {
@@ -40,7 +36,7 @@ export const modelInstanceClient = (port: number = 1549) => {
 
     if (msgJson.kind === "connected") {
       console.log("client: connected to Alloy server");
-    } else {
+    } else if (msgJson.kind === "ModelAndInstance") {
       console.log("client: received model and instance");
       const rawModel = msgJson.model;
       fs.writeFileSync(
@@ -69,10 +65,12 @@ export const modelInstanceClient = (port: number = 1549) => {
 
       console.log("client: generated domain and substance");
       broadcast({ domain, substance });
+    } else {
+      console.warn("message type " + msgJson.kind + " is not yet implemented");
     }
   };
 
   return wsToAlloy;
 };
 
-export {wsToAlloy};
+export { wsToAlloy };

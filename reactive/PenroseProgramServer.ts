@@ -1,6 +1,7 @@
 import { err } from "@penrose/core/dist/utils/Error";
 import { WebSocket, WebSocketServer } from "ws";
 import { wsToAlloy } from "./ModelInstanceClient.js";
+import { ModelExplorationMessage } from "./PenlloyIDEMessage.js";
 
 let wss: WebSocketServer | null;
 
@@ -42,41 +43,6 @@ export const broadcast = ({
   }
 };
 
-{
-  /*
-
-  wss.on('message', (message) => {
-  try {
-    const parsedMessage = JSON.parse(message);
-    console.log('Received message:', parsedMessage);
-      if (parsedMessage.kind === 'ExploreModel') {
-        switch (parsedMessage.operation) {
-          case 'NewInit':
-            console.log('Handling NewInit operation');
-            break;
-          case 'NewTrace':
-            console.log('Handling NewTrace operation');
-            break;
-          case 'NewFork':
-            console.log('Handling NewFork operation');
-            break;
-          case 'StepLeft':
-            console.log('Handling StepLeft operation');
-            break;
-          case 'StepRight':
-            console.log('Handling StepRight operation');
-            break;
-          default:
-            console.log('Unkown operation given');
-        } 
-      }
-  }
-
-
-
-  */
-}
-
 export const penroseProgramServer = (port: number = 1550) => {
   wss = new WebSocketServer({ port });
   console.log("server: started penrose program server at port " + port);
@@ -91,45 +57,44 @@ export const penroseProgramServer = (port: number = 1550) => {
       })
     );
     ws.on("message", (msg) => {
-      console.log("message received");
+      console.log("server: received message from IDE: " + msg.toString());
       try {
-        //console.log(msg.toString());
-        const parsedMessage = JSON.parse(msg.toString());
-        console.log('Recieved message', parsedMessage);
-        if(parsedMessage.kind === 'ExploreModel') {
-          switch(parsedMessage.operation) {
-            case 'NewInit':
-              console.log('New Init operation');
+        const parsedMessage = JSON.parse(
+          msg.toString()
+        ) as ModelExplorationMessage;
+        console.log("Recieved message", parsedMessage);
+        if (parsedMessage.kind === "ExploreModel") {
+          switch (parsedMessage.operation) {
+            case "NewInit":
+              console.log("New Init operation");
               wsToAlloy.send(JSON.stringify(parsedMessage));
-              console.log('success'); //test
+              console.log("success"); //test
               break;
-            case 'NewTrace':
-              console.log('New Trace operation');
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-              break;
-            case 'NewFork':
-              console.log('New Fork operation');
+            case "NewTrace":
+              console.log("New Trace operation");
               wsToAlloy.send(JSON.stringify(parsedMessage));
               break;
-            case 'StepLeft':
-              console.log('Step Left operation')
+            case "NewFork":
+              console.log("New Fork operation");
               wsToAlloy.send(JSON.stringify(parsedMessage));
               break;
-            case 'Stepright':
-              console.log('Step right operation')
+            case "StepLeft":
+              console.log("Step Left operation");
+              wsToAlloy.send(JSON.stringify(parsedMessage));
+              break;
+            case "StepRight":
+              console.log("Step right operation");
               wsToAlloy.send(JSON.stringify(parsedMessage));
               break;
           }
         } else {
-          console.log('Non-ExploreModel operation');
+          console.log("Non-ExploreModel operation");
         }
-      } catch(error) {
-        console.log('Could not parse JSON', error);
+      } catch (error) {
+        console.log("Could not parse JSON", error);
       }
     });
   });
-
-  
 
   // for (const ws of wss.clients) {
   //   ws.on("message", (msg) => {
