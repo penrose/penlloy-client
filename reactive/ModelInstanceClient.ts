@@ -8,10 +8,10 @@ import {
 import * as fs from "fs";
 import { broadcast } from "./PenroseProgramServer.js";
 
-
+let wsToAlloy: WebSocket;
 
 export const modelInstanceClient = (port: number = 1549) => {
-  const ws: WebSocket = new WebSocket("ws://localhost:" + port);
+  wsToAlloy = new WebSocket("ws://localhost:" + port);
   //move this outside, when called, assign the port
 
   
@@ -20,21 +20,21 @@ export const modelInstanceClient = (port: number = 1549) => {
 
   fs.mkdirSync("./temp_outputs", { recursive: true });
 
-  ws.onopen = () => {
+  wsToAlloy.onopen = () => {
     console.log("client: Connection to Alloy has been established.");
   };
-  ws.onerror = (error) => {
+  wsToAlloy.onerror = (error) => {
     console.log("client: Encountered error with message " + error.message);
-    ws.close();
+    wsToAlloy.close();
   };
-  ws.onclose = () => {
+  wsToAlloy.onclose = () => {
     console.log(
       "client: Alloy disconnected. Attempting to re-connect in 1 second."
     );
     setTimeout(() => modelInstanceClient(port), 1000);
   };
 
-  ws.onmessage = (event) => {
+  wsToAlloy.onmessage = (event) => {
     const msgStr = event.data as string;
     const msgJson = JSON.parse(msgStr) as ReceivedAlloyMessage;
 
@@ -72,5 +72,7 @@ export const modelInstanceClient = (port: number = 1549) => {
     }
   };
 
-  return ws;
+  return wsToAlloy;
 };
+
+export {wsToAlloy};

@@ -1,5 +1,6 @@
 import { err } from "@penrose/core/dist/utils/Error";
 import { WebSocket, WebSocketServer } from "ws";
+import { wsToAlloy } from "./ModelInstanceClient.js";
 
 let wss: WebSocketServer | null;
 
@@ -91,10 +92,44 @@ export const penroseProgramServer = (port: number = 1550) => {
     );
     ws.on("message", (msg) => {
       console.log("message received");
+      try {
+        //console.log(msg.toString());
+        const parsedMessage = JSON.parse(msg.toString());
+        console.log('Recieved message', parsedMessage);
+        if(parsedMessage.kind === 'ExploreModel') {
+          switch(parsedMessage.operation) {
+            case 'NewInit':
+              console.log('New Init operation');
+              wsToAlloy.send(JSON.stringify(parsedMessage));
+              console.log('success'); //test
+              break;
+            case 'NewTrace':
+              console.log('New Trace operation');
+              wsToAlloy.send(JSON.stringify(parsedMessage));
+              break;
+            case 'NewFork':
+              console.log('New Fork operation');
+              wsToAlloy.send(JSON.stringify(parsedMessage));
+              break;
+            case 'StepLeft':
+              console.log('Step Left operation')
+              wsToAlloy.send(JSON.stringify(parsedMessage));
+              break;
+            case 'Stepright':
+              console.log('Step right operation')
+              wsToAlloy.send(JSON.stringify(parsedMessage));
+              break;
+          }
+        } else {
+          console.log('Non-ExploreModel operation');
+        }
+      } catch(error) {
+        console.log('Could not parse JSON', error);
+      }
     });
   });
 
-  const client_ws: WebSocket = new WebSocket("ws://localhost:" + port);
+  
 
   // for (const ws of wss.clients) {
   //   ws.on("message", (msg) => {
