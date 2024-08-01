@@ -8,8 +8,15 @@ import {
 import * as fs from "fs";
 import { broadcast } from "./PenroseProgramServer.js";
 
+
+
 export const modelInstanceClient = (port: number = 1549) => {
   const ws: WebSocket = new WebSocket("ws://localhost:" + port);
+  //move this outside, when called, assign the port
+
+  
+
+
 
   fs.mkdirSync("./temp_outputs", { recursive: true });
 
