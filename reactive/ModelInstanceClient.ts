@@ -9,6 +9,7 @@ import * as fs from "fs";
 import { broadcast } from "./PenroseProgramServer.js";
 
 let wsToAlloy: WebSocket;
+let modelType: string = "";
 
 export const modelInstanceClient = (port: number = 1549) => {
   wsToAlloy = new WebSocket("ws://localhost:" + port);
@@ -65,8 +66,9 @@ export const modelInstanceClient = (port: number = 1549) => {
 
       console.log("client: generated domain and substance");
       broadcast({ domain, substance });
-    } else {
-      console.warn("message type " + msgJson.kind + " is not yet implemented");
+    } else if (msgJson.kind === "Config") {
+      console.log('model type: ' + (msgJson.isTrace ? ('temporal') : ('non-temporal'))) //test
+      modelType = msgJson.isTrace ? ('temporal') : ('non-temporal')
     }
   };
 
@@ -74,3 +76,5 @@ export const modelInstanceClient = (port: number = 1549) => {
 };
 
 export { wsToAlloy };
+export { modelType } ;
+
