@@ -10,7 +10,7 @@ let currentSubstance: string = "";
 
 type ExploreModelMessage = {
   kind: "ExploreModel";
-  operation: "Newinit" | "NewTrace" | "NewFork" | "StepLeft" | "StepRight" | "New";
+  operation: "Newinit" | "NewTrace" | "NewFork" | "StepLeft" | "StepRight" | "Next";
 }; //delete
 
 export const broadcast = ({
@@ -92,8 +92,8 @@ export const penroseProgramServer = (port: number = 1550) => {
               console.log("Step right operation");
               wsToAlloy.send(JSON.stringify(parsedMessage));
               break;
-            case "New":
-              console.log("New operation / non-temporal");
+            case "Next":
+              console.log("Next operation / non-temporal");
               wsToAlloy.send(JSON.stringify(parsedMessage))
           }
         } else {
