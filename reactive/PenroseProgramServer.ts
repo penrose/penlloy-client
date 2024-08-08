@@ -1,7 +1,10 @@
 import { err } from "@penrose/core/dist/utils/Error";
 import { WebSocket, WebSocketServer } from "ws";
 import { wsToAlloy } from "./ModelInstanceClient.js";
-import { ModelExplorationMessage } from "./PenlloyIDEMessage.js";
+import {
+  MessageFromIDE,
+  ModelExplorationMessage,
+} from "../types/MessageFromIDE.js";
 import { ModelConfig } from "../types/ModelConfig.js";
 import {
   currentConfig,
@@ -10,7 +13,7 @@ import {
   setCurrentConfig,
   setCurrentDomain,
   setCurrentSubstance,
-} from "./CurrentState.js";
+} from "./CachedState.js";
 
 let wss: WebSocketServer | null;
 
@@ -69,8 +72,12 @@ export const broadcastConfig = (config: ModelConfig) => {
 export const penroseProgramServer = (port: number = 1550) => {
   wss = new WebSocketServer({ port });
   console.log("server: started penrose program server at port " + port);
+
+  // Whenever a new client starts a connection
   wss.on("connection", (ws) => {
     console.log("server: client connected at " + ws.url);
+
+    // Send the Domain and Substance we have cached
     console.log("server: sending current domain and substance to new client");
     ws.send(
       JSON.stringify({
@@ -79,52 +86,23 @@ export const penroseProgramServer = (port: number = 1550) => {
         substance: currentSubstance,
       })
     );
-    console.log("server: sending current model type to new client");
+
+    // Send the Config we have cached
+    console.log("server: sending current config to new client");
     ws.send(
       JSON.stringify({
         kind: "Config",
         isTrace: currentConfig.isTrace,
       })
     );
+
+    // And start listening for messages from that client
     ws.on("message", (msg) => {
       console.log("server: received message from IDE: " + msg.toString());
-      try {
-        const parsedMessage = JSON.parse(
-          msg.toString()
-        ) as ModelExplorationMessage;
-        console.log("Recieved message", parsedMessage);
-        if (parsedMessage.kind === "ExploreModel") {
-          switch (parsedMessage.operation) {
-            case "NewInit":
-              console.log("New Init operation");
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-              break;
-            case "NewTrace":
-              console.log("New Trace operation");
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-              break;
-            case "NewFork":
-              console.log("New Fork operation");
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-              break;
-            case "StepLeft":
-              console.log("Step Left operation");
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-              break;
-            case "StepRight":
-              console.log("Step right operation");
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-              break;
-            case "Next":
-              console.log("Next operation / non-temporal");
-              wsToAlloy.send(JSON.stringify(parsedMessage));
-          }
-        } else {
-          console.log("Non-ExploreModel operation");
-        }
-      } catch (error) {
-        console.log("Could not parse JSON", error);
-      }
+      const parsedMessage = JSON.parse(msg.toString()) as MessageFromIDE;
+
+      // The message shall be forwarded to Alloy
+      wsToAlloy.send(JSON.stringify(parsedMessage));
     });
   });
   return wss;

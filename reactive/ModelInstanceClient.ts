@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { ReceivedAlloyMessage } from "./AlloyMessage.js";
+import { MessageFromAlloy } from "../types/MessageFromAlloy.js";
 import { compileModel, translateToDomain } from "../generator/domain.js";
 import {
   compileInstance,
@@ -32,7 +32,7 @@ export const modelInstanceClient = (port: number = 1549) => {
 
   wsToAlloy.onmessage = (event) => {
     const msgStr = event.data as string;
-    const msgJson = JSON.parse(msgStr) as ReceivedAlloyMessage;
+    const msgJson = JSON.parse(msgStr) as MessageFromAlloy;
 
     if (msgJson.kind === "connected") {
       console.log("client: connected to Alloy server");
@@ -66,6 +66,7 @@ export const modelInstanceClient = (port: number = 1549) => {
       console.log("client: generated domain and substance");
       broadcastPenrose({ domain, substance });
     } else if (msgJson.kind === "Config") {
+      console.log("client: received config");
       broadcastConfig({ isTrace: msgJson.isTrace });
     }
   };

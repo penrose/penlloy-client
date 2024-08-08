@@ -10,3 +10,5 @@ export type ModelExplorationMessage = {
   kind: "ExploreModel";
   operation: ModelExplorationOp;
 };
+
+export type MessageFromIDE = ModelExplorationMessage;

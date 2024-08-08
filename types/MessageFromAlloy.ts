@@ -1,7 +1,7 @@
-import { RawInstance } from "../types/RawAlloyInstance.js";
-import { RawModel } from "../types/RawAlloyModel.js";
+import { RawInstance } from "./RawAlloyInstance.js";
+import { RawModel } from "./RawAlloyModel.js";
 
-export type ReceivedAlloyMessage =
+export type MessageFromAlloy =
   | ConnectedMessage
   | ModelAndInstanceMessage
   | ConfigMessage;
