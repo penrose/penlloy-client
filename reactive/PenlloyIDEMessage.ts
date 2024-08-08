@@ -1,4 +1,12 @@
+export type ModelExplorationOp =
+  | "NewInit"
+  | "NewTrace"
+  | "NewFork"
+  | "StepLeft"
+  | "StepRight"
+  | "Next";
+
 export type ModelExplorationMessage = {
   kind: "ExploreModel";
-  operation: "NewInit" | "NewTrace" | "NewFork" | "StepLeft" | "StepRight" | "Next";
+  operation: ModelExplorationOp;
 };

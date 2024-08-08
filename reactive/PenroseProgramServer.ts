@@ -1,27 +1,28 @@
 import { err } from "@penrose/core/dist/utils/Error";
 import { WebSocket, WebSocketServer } from "ws";
-import { modelType, wsToAlloy } from "./ModelInstanceClient.js";
+import { wsToAlloy } from "./ModelInstanceClient.js";
 import { ModelExplorationMessage } from "./PenlloyIDEMessage.js";
+import { ModelConfig } from "../types/ModelConfig.js";
+import {
+  currentConfig,
+  currentDomain,
+  currentSubstance,
+  setCurrentConfig,
+  setCurrentDomain,
+  setCurrentSubstance,
+} from "./CurrentState.js";
 
 let wss: WebSocketServer | null;
 
-let currentDomain: string = "";
-let currentSubstance: string = "";
-
-type ExploreModelMessage = {
-  kind: "ExploreModel";
-  operation: "Newinit" | "NewTrace" | "NewFork" | "StepLeft" | "StepRight" | "Next";
-}; //delete
-
-export const broadcast = ({
+export const broadcastPenrose = ({
   domain,
   substance,
 }: {
   domain: string;
   substance: string;
 }) => {
-  currentDomain = domain;
-  currentSubstance = substance;
+  setCurrentDomain(domain);
+  setCurrentSubstance(substance);
   if (wss !== null) {
     console.log("server: broadcasting domain and substance to clients");
     wss.clients.forEach((ws) => {
@@ -36,6 +37,28 @@ export const broadcast = ({
       }
     });
     console.log("server: broadcasted domain and substance to clients");
+  } else {
+    console.error(
+      "server: broadcast failed because wss has not been initialized"
+    );
+  }
+};
+
+export const broadcastConfig = (config: ModelConfig) => {
+  setCurrentConfig(config);
+  if (wss !== null) {
+    console.log("server: broadcasting config to clients");
+    wss.clients.forEach((ws) => {
+      if (ws.readyState === WebSocket.OPEN) {
+        ws.send(
+          JSON.stringify({
+            kind: "Config",
+            isTrace: currentConfig.isTrace,
+          })
+        );
+      }
+    });
+    console.log("server: broadcasted config to clients");
   } else {
     console.error(
       "server: broadcast failed because wss has not been initialized"
@@ -60,9 +83,9 @@ export const penroseProgramServer = (port: number = 1550) => {
     ws.send(
       JSON.stringify({
         kind: "Config",
-        isTrace: modelType
+        isTrace: currentConfig.isTrace,
       })
-    )
+    );
     ws.on("message", (msg) => {
       console.log("server: received message from IDE: " + msg.toString());
       try {
@@ -94,7 +117,7 @@ export const penroseProgramServer = (port: number = 1550) => {
               break;
             case "Next":
               console.log("Next operation / non-temporal");
-              wsToAlloy.send(JSON.stringify(parsedMessage))
+              wsToAlloy.send(JSON.stringify(parsedMessage));
           }
         } else {
           console.log("Non-ExploreModel operation");
